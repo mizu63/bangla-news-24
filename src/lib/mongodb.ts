@@ -1,16 +1,13 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URL!;
+const uri = process.env.MONGODB_URL;
 
-const globalForMongo = globalThis as unknown as {
-  mongoClient: MongoClient | undefined;
-};
-
-export const client =
-  globalForMongo.mongoClient ?? new MongoClient(uri);
-
-if (process.env.NODE_ENV !== "production") {
-  globalForMongo.mongoClient = client;
+if (!uri) {
+  throw new Error("MONGODB_URL is not defined");
 }
 
-export const db = client.db("bangla-news-24");
+const client = new MongoClient(uri);
+
+const db = client.db("bangla-news-24");
+
+export { client, db };
